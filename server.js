@@ -15,6 +15,11 @@ const testRedisConnection = async() => {
     try {
         await client.connect();
         console.log('Redis connection successful!');
+
+        //to set key-value pair and get value using key
+        await client.set('key', 'customValue');
+        const extractValue = await client.get('key');
+        console.log(extractValue);
     } catch (error) {
         console.log(error);
     } finally { //to make sure there is no open connection
