@@ -25,6 +25,11 @@ const testRedisConnection = async() => {
         const deleteCount = await client.del('name');
         console.log(deleteCount);
 
+        //increment count 
+        await client.set('count', '100'); 
+        const incrementCount = await client.incr('count'); 
+        console.log(incrementCount);
+
     } catch (error) {
         console.log(error);
     } finally { //to make sure there is no open connection
