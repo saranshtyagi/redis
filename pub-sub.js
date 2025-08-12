@@ -27,9 +27,41 @@ const testAdditionalFunctionality = async() => {
 
         await subscriber.unsubscribe('dummy-channel'); 
         await subscriber.quit(); // close the subscriber connection. 
+
+        // pipelining & transactions
+        // 1. Transactions: 
+        const multi = client.multi(); 
+
+        multi.set("key-transaction1", "value1"); 
+        multi.set("key-transaction2", "value2"); 
+        multi.get("key-transaction1"); 
+        multi.get("key-transaction2");
+
+        const results = await multi.exec(); 
+        console.log(results);
+
+        // 2. Pipelining:
+        const pipeline = client.multi(); 
+        multi.set("key-pipeline1", "value1"); 
+        multi.set("key-pipeline2", "value2"); 
+        multi.get("key-pipeline1"); 
+        multi.get("key-pipeline2"); 
+
+        const pipelineResults = await multi.exec(); 
+        console.log(pipelineResults);
+
+        //batch data operation:
+        const pipelineOne = client.multi(); 
+
+        for(let i = 0; i < 1000; i++) {
+            pipeline.set(`user:${i}:action`, `Action ${i}`)
+        }
+
+        await pipelineOne.exec();
+
     } catch (error) {
         console.log(error);
-    } finally {
+    } finally { 
         client.quit();
     }
 }
